@@ -24,6 +24,95 @@ El motor soporta múltiples APIs de sonido para asegurar compatibilidad con dive
 
 GUB Cross está diseñado para ser compatible con varias plataformas, incluyendo [lista de plataformas soportadas].
 
+# Requerimientos para Compilar
+
+## Linux
+
+- CMake 3.10 o superior
+- Compilador GCC o Clang
+- Librerías de desarrollo para las APIs seleccionadas, debe tener instalada la librería seleccionada para compilar el motor:
+  - SDL (`libsdl2-dev`)
+  - RayLib (`libraylib-dev`)
+  - X11 (`libx11-dev`)
+  - OpenAL (`libopenal-dev`)
+
+## Windows
+
+- CMake 3.10 o superior
+- MinGW o MinGW_W64 (compilador GCC para Windows)
+- Librerías de desarrollo para las APIs seleccionadas, debe tener instalada la librería seleccionada para compilar el motor:
+  - SDL (`SDL2-devel`)
+  - RayLib (`raylib`)
+  - OpenAL (`openal-soft`)
+
+# Compilación
+
+## Linux
+
+1. Crear directorio `build`:
+
+   ```sh
+   mkdir build/
+   cd build/
+   ```
+
+2. Ejecutar `cmake`:
+
+   **Nota:** Cambia `SDL` por la plataforma o librería con la cual quieras compilar el motor.
+
+   Para compilar como librería compartida:
+
+   ```sh
+   cmake -D USE_SDL=ON -D USE_SDL_SOUND=ON ..
+   ```
+
+   Para compilar como librería estática:
+
+   ```sh
+   cmake -D USE_SDL=ON -D USE_SDL_SOUND=ON -D BUILD_SHARED_LIBS=OFF ..
+   ```
+
+3. Ejecutar `make`:
+
+   ```sh
+   make
+   ```
+
+   Esto generará dentro de `build` un directorio `lib` con la librería compilada.
+
+## Windows (MinGW)
+
+1. Crear directorio `build`:
+
+   ```sh
+   mkdir build
+   cd build
+   ```
+
+2. Ejecutar `cmake`:
+
+   **Nota:** Cambia `SDL` por la plataforma o librería con la cual quieras compilar el motor.
+
+   Para compilar como librería compartida:
+
+   ```sh
+   cmake -D USE_SDL=ON -D USE_SDL_SOUND=ON .. -G "MinGW Makefiles"
+   ```
+
+   Para compilar como librería estática:
+
+   ```sh
+   cmake -D USE_SDL=ON -D USE_SDL_SOUND=ON -D BUILD_SHARED_LIBS=OFF .. -G "MinGW Makefiles"
+   ```
+
+3. Ejecutar `mingw32-make`:
+
+   ```sh
+   mingw32-make
+   ```
+
+   Esto generará dentro de `build` un directorio `lib` con la librería compilada.
+
 ## Uso y Ejemplos
 
 Para iniciar un proyecto con GUB Cross, sigue los siguientes pasos:
