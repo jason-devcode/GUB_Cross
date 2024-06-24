@@ -42,30 +42,30 @@ set(GAME_ENGINE_SOURCES
 if (USE_SDL)
     add_definitions(-DUSE_SDL)
     list(APPEND GAME_ENGINE_SOURCES
-        src/scripts/rendering/archs/sdl/render_init.c
-        src/scripts/rendering/archs/sdl/render_update.c
-        src/scripts/rendering/archs/sdl/render_cleanup.c
+        src/scripts/rendering/backends/sdl/render_init.c
+        src/scripts/rendering/backends/sdl/render_update.c
+        src/scripts/rendering/backends/sdl/render_cleanup.c
     )
 elseif (USE_RAYLIB)
     add_definitions(-DUSE_RAYLIB)
     list(APPEND GAME_ENGINE_SOURCES
-        src/scripts/rendering/archs/raylib/render_init.c
-        src/scripts/rendering/archs/raylib/render_update.c
-        src/scripts/rendering/archs/raylib/render_cleanup.c
+        src/scripts/rendering/backends/raylib/render_init.c
+        src/scripts/rendering/backends/raylib/render_update.c
+        src/scripts/rendering/backends/raylib/render_cleanup.c
     )
 elseif (USE_WINAPI)
     add_definitions(-DUSE_WINAPI)
     list(APPEND GAME_ENGINE_SOURCES
-        src/scripts/rendering/archs/windows/render_init.c
-        src/scripts/rendering/archs/windows/render_update.c
-        src/scripts/rendering/archs/windows/render_cleanup.c
+        src/scripts/rendering/backends/windows/render_init.c
+        src/scripts/rendering/backends/windows/render_update.c
+        src/scripts/rendering/backends/windows/render_cleanup.c
     )
 elseif (USE_X11)
     add_definitions(-DUSE_X11)
     list(APPEND GAME_ENGINE_SOURCES
-        src/scripts/rendering/archs/linux/render_init.c
-        src/scripts/rendering/archs/linux/render_update.c
-        src/scripts/rendering/archs/linux/render_cleanup.c
+        src/scripts/rendering/backends/linux/render_init.c
+        src/scripts/rendering/backends/linux/render_update.c
+        src/scripts/rendering/backends/linux/render_cleanup.c
     )
 else ()
     message(FATAL_ERROR "No rendering backend selected")
@@ -75,26 +75,26 @@ endif ()
 if (USE_SDL_SOUND)
     add_definitions(-DUSE_SDL_SOUND)
     list(APPEND GAME_ENGINE_SOURCES
-        src/scripts/sound/archs/sdl/sound_init.c
-        src/scripts/sound/archs/sdl/sound_load.c
-        src/scripts/sound/archs/sdl/sound_play.c
-        src/scripts/sound/archs/sdl/sound_cleanup.c
+        src/scripts/sound/backends/sdl/sound_init.c
+        src/scripts/sound/backends/sdl/sound_load.c
+        src/scripts/sound/backends/sdl/sound_play.c
+        src/scripts/sound/backends/sdl/sound_cleanup.c
     )
 elseif (USE_RAYLIB_SOUND)
     add_definitions(-DUSE_RAYLIB_SOUND)
     list(APPEND GAME_ENGINE_SOURCES
-        src/scripts/sound/archs/raylib/sound_init.c
-        src/scripts/sound/archs/raylib/sound_load.c
-        src/scripts/sound/archs/raylib/sound_play.c
-        src/scripts/sound/archs/raylib/sound_cleanup.c
+        src/scripts/sound/backends/raylib/sound_init.c
+        src/scripts/sound/backends/raylib/sound_load.c
+        src/scripts/sound/backends/raylib/sound_play.c
+        src/scripts/sound/backends/raylib/sound_cleanup.c
     )
 elseif (USE_OPENAL)
     add_definitions(-DUSE_OPENAL)
     list(APPEND GAME_ENGINE_SOURCES
-        src/scripts/sound/archs/openal/sound_init.c
-        src/scripts/sound/archs/openal/sound_load.c
-        src/scripts/sound/archs/openal/sound_play.c
-        src/scripts/sound/archs/openal/sound_cleanup.c
+        src/scripts/sound/backends/openal/sound_init.c
+        src/scripts/sound/backends/openal/sound_load.c
+        src/scripts/sound/backends/openal/sound_play.c
+        src/scripts/sound/backends/openal/sound_cleanup.c
     )
 else ()
     message(FATAL_ERROR "No sound backend selected")
@@ -102,9 +102,16 @@ endif ()
 
 # GameEngine library
 if (BUILD_SHARED_LIBS)
-    add_library(GameEngine SHARED ${GAME_ENGINE_SOURCES})
+    if (WIN32)
+        add_library(GameEngine SHARED ${GAME_ENGINE_SOURCES})
+        set_target_properties(GameEngine PROPERTIES SUFFIX ".dll")
+    elseif (UNIX)
+        add_library(GameEngine SHARED ${GAME_ENGINE_SOURCES})
+        set_target_properties(GameEngine PROPERTIES SUFFIX ".so")
+    endif ()
 else ()
     add_library(GameEngine STATIC ${GAME_ENGINE_SOURCES})
+    set_target_properties(GameEngine PROPERTIES SUFFIX ".a")
 endif ()
 
 # Testing
