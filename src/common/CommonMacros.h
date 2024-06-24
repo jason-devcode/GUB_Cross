@@ -1,0 +1,6 @@
+#ifndef COMMON_MACROS_H
+#define COMMON_MACROS_H
+
+#define EXPORT_GUB_LIB
+
+#endif // COMMON_MACROS_H
