@@ -20,14 +20,22 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+# Configure header file to define EXPORT_GUB_LIB macro
+if (BUILD_SHARED_LIBS)
+    set(EXPORT_GUB_LIB "extern")
+else ()
+    set(EXPORT_GUB_LIB "")
+endif ()
+
+# Configure header file to define EXPORT_GUB_LIB macro
+configure_file(${CMAKE_SOURCE_DIR}/src/common/CommonMacros.h.in ${CMAKE_BINARY_DIR}/lib/include/common/CommonMacros.h)
+
 # Include directories
 include_directories(src)
 
 # Define EXPORT macro based on BUILD_SHARED_LIBS
 if (BUILD_SHARED_LIBS)
-    add_definitions(-DEXPORT_GUB_LIB=extern)
-else()
-    add_definitions(-DEXPORT_GUB_LIB=)
+    add_definitions(-DEXPORT_BUILD_SHARED_LIBS)
 endif()
 
 # Sources for the GameEngine library
@@ -124,9 +132,12 @@ endif ()
 # Copy header files to 'include' directory in 'lib' output directory
 file(GLOB_RECURSE HEADER_FILES "${CMAKE_SOURCE_DIR}/src/*.h")
 foreach(header ${HEADER_FILES})
-    get_filename_component(header_path ${header} DIRECTORY)
-    string(REPLACE "${CMAKE_SOURCE_DIR}/src" "" header_path ${header_path})
-    set(dest "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/include${header_path}")
-    file(MAKE_DIRECTORY ${dest})
-    configure_file(${header} ${dest}/${header} COPYONLY)
+    get_filename_component(rel_header ${header} NAME)
+    if (NOT ${rel_header} STREQUAL "CommonMacros.h")
+        file(RELATIVE_PATH rel_header_path ${CMAKE_SOURCE_DIR}/src ${header})
+        get_filename_component(header_path ${rel_header_path} DIRECTORY)
+        set(dest "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/include/${header_path}")
+        file(MAKE_DIRECTORY ${dest})
+        configure_file(${header} ${dest}/${rel_header} COPYONLY)
+    endif ()
 endforeach()
