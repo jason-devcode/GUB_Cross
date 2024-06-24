@@ -21,7 +21,14 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Include directories
-include_directories(include)
+include_directories(src)
+
+# Define EXPORT macro based on BUILD_SHARED_LIBS
+if (BUILD_SHARED_LIBS)
+    add_definitions(-DEXPORT_GUB_LIB=extern)
+else()
+    add_definitions(-DEXPORT_GUB_LIB=)
+endif()
 
 # Sources for the GameEngine library
 set(GAME_ENGINE_SOURCES
@@ -114,5 +121,12 @@ else ()
     set_target_properties(GameEngine PROPERTIES SUFFIX ".a")
 endif ()
 
-# Testing
-enable_testing()
+# Copy header files to 'include' directory in 'lib' output directory
+file(GLOB_RECURSE HEADER_FILES "${CMAKE_SOURCE_DIR}/src/*.h")
+foreach(header ${HEADER_FILES})
+    get_filename_component(header_path ${header} DIRECTORY)
+    string(REPLACE "${CMAKE_SOURCE_DIR}/src" "" header_path ${header_path})
+    set(dest "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/include${header_path}")
+    file(MAKE_DIRECTORY ${dest})
+    configure_file(${header} ${dest}/${header} COPYONLY)
+endforeach()
