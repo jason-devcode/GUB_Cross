@@ -6,6 +6,6 @@
 /** for bool, true, false */
 #include <stdbool.h>
 
-EXPORT_GUB_LIB bool physicsInit();
+EXPORT_GUB bool physicsInit();
 
 #endif

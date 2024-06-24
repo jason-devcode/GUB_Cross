@@ -22,9 +22,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Configure header file to define EXPORT_GUB_LIB macro
 if (BUILD_SHARED_LIBS)
-    set(EXPORT_GUB_LIB "extern")
+    set(EXPORT_GUB "extern")
 else ()
-    set(EXPORT_GUB_LIB "")
+    set(EXPORT_GUB "")
 endif ()
 
 # Configure header file to define EXPORT_GUB_LIB macro
